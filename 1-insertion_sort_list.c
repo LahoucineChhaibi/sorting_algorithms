@@ -1,53 +1,83 @@
 #include "sort.h"
 
 /**
-  * insertion_sort_list - Sorts an doubly linked list
-  * of integers in ascending order using
-  * the Insertion sort algorithm.
-  * @list: The doubly linked list to sort
-  *
-  * Return: Nothing!
-  */
+ * _swap - Swaps two nodes of doubly linked list
+ *
+ * @node: node base to change
+ * @list: double link list head
+ *
+ * Return: No Return
+ */
+void _swap(listint_t **node, listint_t **list)
+{
+	listint_t *tmp = *node, *tmp2, *tmp3;
+
+	if (!(*node)->prev)
+		*list = (*node)->next;
+
+	tmp = tmp3 = *node;
+	tmp2 = tmp->next;
+
+	tmp->next = tmp2->next;
+	tmp3 = tmp->prev;
+	tmp->prev = tmp2;
+	tmp2->next = tmp;
+	tmp2->prev = tmp3;
+
+	if (tmp2->prev)
+		tmp2->prev->next = tmp2;
+
+
+	if (tmp->next)
+		tmp->next->prev = tmp;
+
+	*node = tmp2;
+
+}
+/**
+ * insertion_sort_list - sorts a doubly linked list of integers
+ * in ascending order using the Insertion sort algorithm
+ *
+ * @list: doubly linked list
+ *
+ * Return: No Return
+ */
 void insertion_sort_list(listint_t **list)
 {
-	bool flag = false;
-	listint_t *tmp = NULL, *aux = NULL;
+	listint_t  *head, *tback, *aux;
 
-	if (!list || !(*list) || !(*list)->next)
+	if (!list || !(*list) || (!((*list)->prev) && !((*list)->next)))
 		return;
 
-	tmp = *list;
-	while (tmp->next)
+	head = *list;
+	while (head && head->next)
 	{
-		if (tmp->n > tmp->next->n)
+		if (head->n > head->next->n)
 		{
-			tmp->next->prev = tmp->prev;
-			if (tmp->next->prev)
-				tmp->prev->next = tmp->next;
-			else
-				*list = tmp->next;
+			aux = head;
 
-			tmp->prev = tmp->next;
-			tmp->next = tmp->next->next;
-			tmp->prev->next = tmp;
-			if (tmp->next)
-				tmp->next->prev = tmp;
-
-			tmp = tmp->prev;
+			_swap(&aux, list);
 			print_list(*list);
+			head = aux;
+			tback = aux;
 
-			if (tmp->prev && tmp->prev->n > tmp->n)
+			while (tback && tback->prev)
 			{
-				if (!flag)
-					aux = tmp->next;
-				flag = true;
-				tmp = tmp->prev;
-				continue;
+
+				if (tback->n < tback->prev->n)
+				{
+					aux = tback->prev;
+
+					_swap(&(aux), list);
+
+					print_list(*list);
+					tback = aux->next;
+				}
+
+				tback = tback->prev;
 			}
+
 		}
-		if (!flag)
-			tmp = tmp->next;
-		else
-			tmp = aux, flag = false;
+		head = head->next;
 	}
 }
